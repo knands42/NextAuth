@@ -1,13 +1,11 @@
+import styles from './page.module.css';
+
 const AuthLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return (
-    <div className='h-full flex items-center justify-center bg-sky-500'>
-      {children}
-    </div>
-  );
+  return <div className={styles.auth}>{children}</div>;
 };
 
 export default AuthLayout;

@@ -1,11 +1,8 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { randomBytes, pbkdf2Sync } from 'crypto';
+import * as bcrypt from 'bcryptjs';
 
-type HashPasswordReturn = {
-  salt: string;
-  hash: string;
-};
+const PASSWORD_SALT = 10;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,10 +16,18 @@ export function getEnvVariable(key: string): string {
   return value;
 }
 
-export const hashPassword = (
+export const hashPassword = async (
   password: string,
-  salt: string = randomBytes(16).toString('hex')
-): HashPasswordReturn => {
-  const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return { salt, hash };
+  salt: number = PASSWORD_SALT
+): Promise<string> => {
+  return bcrypt.hash(password, salt);
 };
+
+export const verifyPassword = async (
+  password: string,
+  hash: string
+): Promise<boolean> => {
+  return bcrypt.compare(password, hash);
+};
+
+export { PASSWORD_SALT };
