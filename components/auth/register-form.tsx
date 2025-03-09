@@ -1,10 +1,9 @@
 'use client';
 
 import * as z from 'zod';
-
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { CardWrapper } from './card-wrapper';
 import { RegisterSchema } from '@/schemas';
 import {
@@ -26,6 +25,7 @@ export const RegisterForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -41,6 +41,10 @@ export const RegisterForm = () => {
       register(values).then((data) => {
         setError(data.error ?? '');
         setSuccess(data.success ?? '');
+
+        if (data.success) {
+          router.push('/auth/login');
+        }
       });
     });
   };
@@ -112,7 +116,7 @@ export const RegisterForm = () => {
           {error && <FormError message={error} />}
           {success && <FormSuccess message={success} />}
           <Button type='submit' className='w-full'>
-            Login
+            Register
           </Button>
         </form>
       </Form>
